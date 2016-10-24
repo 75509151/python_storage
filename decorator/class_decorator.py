@@ -16,7 +16,7 @@ class MyDec(object):
         def wrap(self, *arg, **kwargs):
             print "dec_arg begin"
             self.another_func()
-            fn(self, arg, kwargs)
+            fn(self, *arg, **kwargs)
             print "dec_arg over"
         return wrap
 
@@ -24,7 +24,7 @@ class MyDec(object):
     def dec_test_return(fn):
         def wrap(self, *arg, **kwargs):
             print "dec_return begin"
-            ret = fn(self, arg, kwargs)
+            ret = fn(self, *arg, **kwargs)
             print "dec_return end"
             return ret
         return wrap
@@ -64,8 +64,10 @@ class MyClass(object):
     def test_with_arg(self, *arg, **kwargs):
         print "##test_with_arg"
         # print "arg:%s" % arg
-        print str(arg)
-        print str(kwargs)
+        print "arg:%s" % str(arg)
+        print "kwargs:%s" % str(kwargs)
+        print "a: %s" % kwargs.get("a")
+        print "b: %s" % kwargs.get("b")
 
     @MyDec.dec_test_return
     def test_with_return(self, *arg, **kwargs):
@@ -92,4 +94,4 @@ if __name__ == '__main__':
     # a.test2()
     b = SubClass(2)
     b.test()
-    b.test_with_arg("sub", "class")
+    b.test_with_arg(a="sub", b="class")
