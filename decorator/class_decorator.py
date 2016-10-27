@@ -52,6 +52,7 @@ class MyClass(object):
     def another_func(self):
         print "another_func"
 
+    @MyDec.dec_test_arg
     @MyDec.dec_test
     def test(self):
         print "##test"
@@ -86,12 +87,23 @@ class SubClass(MyClass):
         print "sub test"
 
 
+def print_title(title):
+    print "*" * 40
+    print title
+    print "*" * 40
+
+
 if __name__ == '__main__':
-    # a = MyClass(1)
-    # a.test()
-    # a.test_with_arg(12, 45)
-    # print a.test_with_return(4234, 423)
-    # a.test2()
+    a = MyClass(1)
+    print_title("use double decorator, test the order")
+    a.test()
+    print_title(" test the arg")
+    a.test_with_arg(12, 45)
+    print_title("test return")
+    print a.test_with_return(4234, 423)
+    a.test2()
+    print_title("test inherit")
     b = SubClass(2)
     b.test()
+    print_title("test_inherit with arg")
     b.test_with_arg(a="sub", b="class")
