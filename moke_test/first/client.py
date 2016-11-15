@@ -3,10 +3,9 @@ import requests
 
 class Form(object):
     """docstring for Form"""
-    def __init__(self, arg):
+    def __init__(self):
         super(Form, self).__init__()
-        self.arg = arg
-        
+
     def do_sell(self):
         return self.fetch_product()
 

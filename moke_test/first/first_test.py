@@ -3,7 +3,7 @@
 from mock import Mock, MagicMock, patch
 import unittest
 from client import visit_ustack
-
+from contextlib import nested
 
 class ProductionClass:
     def method(self):
@@ -18,6 +18,9 @@ class Count():
     def add(self):
         pass
 
+class Class(object):
+    def method(self):
+        pass
 
 def function(a, b, c):
     pass
@@ -106,7 +109,6 @@ class TestCount(unittest.TestCase):
             mf("wrong arguments")
 
 
-
 class TestPathClient(unittest.TestCase):
     """
     在了解了mock对象之后，我们来看两个方便测试的函数：patch和patch.object。这两个函数都会返回一个mock内部的类实例，这个类是class _patch。返回的这个类实例既可以作为函数的装饰器，也可以作为类的装饰器，也可以作为上下文管理器。使用patch或者patch.object的目的是为了控制mock的范围，意思就是在一个函数范围内，或者一个类的范围内，或者with语句的范围内mock掉一个对象。我们看个代码例子即可："""
@@ -117,13 +119,13 @@ class TestPathClient(unittest.TestCase):
             from client import visit_ustack
             self.assertEqual(visit_ustack(), status_code)
 
-    def test_fail_request(self):
+    def test_patch_func(self):
         status_code = '404'
         fail_send = Mock(return_value=status_code)
         with patch('client.send_request', fail_send):
             self.assertEqual(visit_ustack(), status_code)
 
-    def test_fail_request_with_path_obj(self):
+    def test_patch_func2(self):
         status_code = '404'
         fail_send = Mock(return_value=status_code)
         import client
@@ -131,8 +133,24 @@ class TestPathClient(unittest.TestCase):
             from client import visit_ustack
             self.assertEqual(visit_ustack(), status_code)
 
+    def test_patch_class(self):
+
+        with patch('__main__.Class') as MockClass:
+            instance = MockClass.return_value
+            instance.method.return_value = 'foo'
+            assert Class() is instance
+            assert Class().method() == 'foo'
+
     def test_path_use(self):
-        
+        import client
+        with patch("client.Form") as m:
+            instance = m.return_value
+            instance.fetch_product.return_value = "success"
+            assert client.Form() is instance
+            self.assertEqual("success", client.Form().fetch_product()) 
+
+
+
 
 
 if __name__ == '__main__':
