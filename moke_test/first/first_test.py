@@ -5,6 +5,7 @@ import unittest
 from client import visit_ustack
 from contextlib import nested
 
+
 class ProductionClass:
     def method(self):
         self.something(1, 2, 3)
@@ -18,14 +19,18 @@ class Count():
     def add(self):
         pass
 
+
 class Class(object):
     def method(self):
         pass
+
 
 def function(a, b, c):
     pass
 
 # test Count class
+
+
 class TestCount(unittest.TestCase):
 
     def test_return_value(self):
@@ -64,7 +69,7 @@ class TestCount(unittest.TestCase):
             m()
 
         m = Mock(side_effect=Exception('Boom!'))
-        
+
         with self.assertRaises(Exception):
             m()
 
@@ -112,6 +117,7 @@ class TestCount(unittest.TestCase):
 class TestPathClient(unittest.TestCase):
     """
     在了解了mock对象之后，我们来看两个方便测试的函数：patch和patch.object。这两个函数都会返回一个mock内部的类实例，这个类是class _patch。返回的这个类实例既可以作为函数的装饰器，也可以作为类的装饰器，也可以作为上下文管理器。使用patch或者patch.object的目的是为了控制mock的范围，意思就是在一个函数范围内，或者一个类的范围内，或者with语句的范围内mock掉一个对象。我们看个代码例子即可："""
+
     def test_success_request(self):
         status_code = '200'
         success_send = Mock(return_value=status_code)
@@ -147,10 +153,29 @@ class TestPathClient(unittest.TestCase):
             instance = m.return_value
             instance.fetch_product.return_value = "success"
             assert client.Form() is instance
-            self.assertEqual("success", client.Form().fetch_product()) 
+            self.assertEqual("success", client.Form().fetch_product())
 
 
+from client import rm
 
+
+class RmTestCase(unittest.TestCase):
+
+    @patch('client.os.path')
+    @patch('client.os')
+    def test_rm(self, mock_os, mock_path):
+        # set up the mock
+        mock_path.isfile.return_value = False
+
+        rm("any path")
+        # test that the remove call was NOT called.
+        self.assertFalse(mock_os.remove.called, "Failed to not remove the file if not present.")
+        # make the file 'exist'
+        mock_path.isfile.return_value = True
+
+        rm("any path")
+
+        mock_os.remove.assert_called_with("any path")
 
 
 if __name__ == '__main__':
