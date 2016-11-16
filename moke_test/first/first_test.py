@@ -147,13 +147,11 @@ class TestPathClient(unittest.TestCase):
             assert Class() is instance
             assert Class().method() == 'foo'
 
-    def test_path_use(self):
+    @patch("client.Form.fetch_product")
+    def test_path_use(self, fetch_mock):
         import client
-        with patch("client.Form") as m:
-            instance = m.return_value
-            instance.fetch_product.return_value = "success"
-            assert client.Form() is instance
-            self.assertEqual("success", client.Form().fetch_product())
+        fetch_mock.return_value = "success"
+        self.assertEqual("success", client.Form().do_sell())
 
 
 from client import rm
