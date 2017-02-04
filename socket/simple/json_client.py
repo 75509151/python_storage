@@ -5,7 +5,7 @@
 import socket
 import threading
 import json
-import struct
+import base64
 
 
 def client(ip, port, message):
@@ -35,6 +35,7 @@ def notify_msg(params):
 
     content = json.dumps(content)
     # encrypt
+    content = base64.b64encode(content)
     return content
 
 

@@ -3,6 +3,7 @@
 import socket
 import json
 import time
+import base64
 
 address = ('127.0.0.1', 55555)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # s = socket.socket()
@@ -15,6 +16,7 @@ while True:
     if ss:
         print 'got connected from', addr
         ra = ss.recv(512)
+        ra = base64.b64decode(ra)
         json.loads(ra)
         ss.send('byebye')
         print ra

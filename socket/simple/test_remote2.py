@@ -6,6 +6,7 @@ import socket
 import threading
 import json
 import struct
+import base64
 
 
 def client(ip, port, message):
@@ -29,17 +30,18 @@ def client(ip, port, message):
 def notify_msg(params):
     key = "kunzhi"
 
-    plate_code = params.get("PlateCode", "闽A00001")
+    plate_code = params.get("PlateCode", "闽A01001")
     pay_money = params.get("PayMoney", 1.1)
-    pay_status = params.get("PayStatus", 1)
+    pay_status = params.get("PayStatus", 0)
 
     content = {"key": key,
                "PlateCode": plate_code,
                "PayStatus": pay_status,
-               "PayMoney": pay_money}
+               "PayMone": pay_money}
 
     content = json.dumps(content)
     # encrypt
+    content = base64.b64encode(content)
     return content
 
 
