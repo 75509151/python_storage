@@ -51,7 +51,7 @@ class BaseTimer(threading.Thread):
             while True:
                 self.finished.wait(self.interval)
                 if not self.finished.is_set():
-                    self.task.run(self.task.args, self.task.kwargs)
+                    self.task.run(*self.task.args, **self.task.kwargs)
                 else:
                     break
         else:
@@ -65,10 +65,10 @@ class BaseTimer(threading.Thread):
 
 class PrintTask(TimerTask):
     def __init__(self, *args, **kwargs):
-        super(PrintTask, self).__init__(args, kwargs)
+        super(PrintTask, self).__init__(*args, **kwargs)
 
     def run(self, *args, **kwargs):
-        print "task_%s:%s" % (self.args, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        print "task args:%s: kwargs:%s %s" % (self.args, self.kwargs, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 # class TimerTest(unittest.TestCase):
@@ -84,10 +84,10 @@ class PrintTask(TimerTask):
 
 class BaseTimerTest(unittest.TestCase):
     def test_schedule(self):
-        task = PrintTask(1)
+        task = PrintTask(fist=1, tow=5)
         task_timer = BaseTimer()
         print "begin: %s " % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        task_timer.schedule(task, 2, 1)
+        task_timer.schedule(task, 0.2, 0.5)
 
     def test_schedule_once(self):
         task = PrintTask(2)

@@ -44,6 +44,7 @@ class StateMachine():
         self.active_state.entry_actions()
 
 '''
+
 SCREEN_SIZE = (640, 480)
 NEST_POSITION = (320, 240)
 ANT_COUNT = 20
