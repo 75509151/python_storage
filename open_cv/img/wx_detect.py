@@ -48,6 +48,18 @@ class ShowCapture(wx.Panel):
                 self.pre_frame = erode
             else:
                 diff_img = cv2.absdiff(self.pre_frame, erode)
+                gray = cv2.cvtColor(diff_img, cv2.COLOR_BGR2GRAY)
+                ret, binary = cv2.threshold(gray, 25, 255, cv2.THRESH_BINARY)
+                contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+                for c in contours:
+                    if cv2.contourArea(c) < 2000:  # 设置敏感度
+                        continue
+                    else:
+                        # print(cv2.contourArea(c))
+                        print("前一帧和当前帧不一样了, 有什么东西在动!")
+
+                        break
+                cv2.drawContours(diff_img, contours, -1, (0, 0, 255), 3)
                 self.bmp.CopyFromBuffer(diff_img)
                 self.Refresh()
                 self.pre_frame = erode
