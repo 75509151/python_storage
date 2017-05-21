@@ -59,8 +59,8 @@ class ShowCapture(wx.Panel):
                         print("前一帧和当前帧不一样了, 有什么东西在动!")
 
                         break
-                cv2.drawContours(diff_img, contours, -1, (0, 0, 255), 3)
-                self.bmp.CopyFromBuffer(diff_img)
+                cv2.drawContours(frame, contours, -1, (0, 0, 255), 3)
+                self.bmp.CopyFromBuffer(frame)
                 self.Refresh()
                 self.pre_frame = erode
 
