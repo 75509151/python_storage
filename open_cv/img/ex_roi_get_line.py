@@ -81,8 +81,8 @@ class EdgePanel(wx.Panel):
         image = cv2.pyrMeanShiftFiltering(self.origin_img, self.sp, self.sr)
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         kernel_size = 3
-        detected_edges = cv2.Canny(gray_img, 20, 150, apertureSize=kernel_size)
-        self.cv_bmp = cv2.bitwise_and(self.origin_img, self.origin_img, mask=detected_edges)
+        self.detected_edges = cv2.Canny(gray_img, 10, 100, apertureSize=kernel_size)
+        self.cv_bmp = cv2.bitwise_and(self.origin_img, self.origin_img, mask=self.detected_edges)
         self.rbg_img = cv2.cvtColor(self.cv_bmp, cv2.COLOR_BGR2RGB)
         self.bmp = wx.BitmapFromBuffer(self.w, self.h, self.rbg_img)
         self.edge_img.SetBitmap(self.bmp)
@@ -91,8 +91,17 @@ class EdgePanel(wx.Panel):
         if self.cv_bmp is not None:
             gray_img = cv2.cvtColor(self.cv_bmp, cv2.COLOR_BGR2GRAY)
             ret, mask = cv2.threshold(gray_img, self.threshold, 255, cv2.THRESH_BINARY)
-            # mask_inv = cv2.bitwise_not(mask)
-            img = cv2.bitwise_and(self.cv_bmp, self.cv_bmp, mask=mask)
+            ret, mask_inv = cv2.threshold(gray_img, self.threshold, 255, cv2.THRESH_BINARY_INV)
+            # emptyImage = np.zeros(self.cv_bmp.shape, np.uint8)
+            # emptyImage[:]
+            cv2.imwrite(path + "np_empty_img.jpg", mask)
+            # img = cv2.bitwise_and(self.cv_bmp, self.cv_bmp, mask=mask)
+            # bmp = wx.BitmapFromBuffer(self.w, self.h, img)
+            # self.binary_img.SetBitmap(bmp)
+            lines = cv2.HoughLinesP(mask, rho=1, theta=1 * np.pi / 180, threshold=100, minLineLength=100, maxLineGap=80)
+            img = self.cv_bmp.copy()
+            for x1, y1, x2, y2 in lines[0]:
+                cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
             bmp = wx.BitmapFromBuffer(self.w, self.h, img)
             self.binary_img.SetBitmap(bmp)
 
