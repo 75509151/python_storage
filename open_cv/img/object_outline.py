@@ -6,6 +6,7 @@ import numpy as np
 
 
 class ShowCapture(wx.Panel):
+
     def __init__(self, parent, capture, fps=15):
         wx.Panel.__init__(self, parent)
 

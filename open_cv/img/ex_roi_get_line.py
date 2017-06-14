@@ -105,6 +105,24 @@ class EdgePanel(wx.Panel):
             bmp = wx.BitmapFromBuffer(self.w, self.h, img)
             self.binary_img.SetBitmap(bmp)
 
+            # how to set thresh
+            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            ret, thresh = cv2.threshold(gray_img, 120, 255, 1)
+            # 寻找轮廓
+            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            max_c = contours[0]
+            for c in contours:
+
+            c = contours[0]
+            hull = cv2.convexHull(c)
+            # 10%，即0.1的精确度
+            epsilon = 0.1 * cv2.arcLength(c, True)
+            approx = cv2.approxPolyDP(c, epsilon, True)
+            print approx
+
+            cv2.drawContours(img, [approx], -1, (0, 0, 255), 3)
+            cv2.imwrite(path + "recteng.jpg", img)
+
 
 class CtrlPanel(wx.Panel):
 
