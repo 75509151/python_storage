@@ -9,6 +9,7 @@ class NotFlask():
     @staticmethod
     def build_route_pattern(route):
         route_regex = re.sub(r'(<\w+>)', r'(?P\1.+)', route)
+        print route_regex
         return re.compile("^{}$".format(route_regex))
 
     def route(self, route_str):
@@ -40,8 +41,8 @@ class NotFlask():
 app = NotFlask()
 
 
-@app.route("/hello/<username>")
-def hello_user(username):
-    return "Hello {}!".format(username)
+@app.route("/hello/<username>/<id>")
+def hello_user(username, id):
+    return "Hello {username} . {id}!".format(username=username, id=id)
 
-print app.serve("/hello/ains")
+print app.serve("/hello/ains/llss")
