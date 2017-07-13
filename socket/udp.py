@@ -7,7 +7,7 @@ import json
 address = ('0.0.0.0', 65400)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(address)
-
+print "begin"
 while True:
     try:
         data, addr = s.recvfrom(2048)
