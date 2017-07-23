@@ -228,6 +228,12 @@ class Cka1(Cka):
 
     def get_cmd(self):
         """ Get linux command. """
+        # return "/usr/bin/ssh -i %s -R %s:localhost:22 " \
+        #        "-R %s:localhost:5001 %s@%s" % (PEM_FILE_PATH,
+        #                                        self.hostname2port(2),
+        #                                        self.hostname2port(1),
+        #                                        TUNNEL_USER,
+        #                                        G_TUNNEL_SERVER)
         return "ssh  -R %s:localhost:22 " \
                "-R %s:localhost:%s %s@%s" % (
                    self.hostname2port(2),
