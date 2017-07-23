@@ -11,9 +11,9 @@ print "my_friends", my_friends
 send_friends_name = set([u"基本", u'宝贝'])
 
 for f in my_friends:
-    # print f.name
-    if f.name in send_friends_name:
-        f.send_msg(u"我是机器人，如果多有得罪，来咬我阿！")
+    print f.name
+    # if f.name in send_friends_name:
+    #     f.send_msg(u"我是机器人，如果多有得罪，来咬我阿！")
 
 
 everybody_groups = bot.groups().search('hi_everybody')
