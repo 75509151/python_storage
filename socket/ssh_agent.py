@@ -21,7 +21,7 @@ import os
 import time
 import pexpect
 import logging
-
+import codecs
 
 # Config for cka.
 MAX_DUP = 120
@@ -32,6 +32,8 @@ DEBUG = 0
 INFO = 1
 ERROR = 2
 
+
+DEFAULT_ID = "A010"
 TUNNEL_SERVER = '45.63.87.142'
 TUNNEL_USER = "jay"
 LOCAL_PORT = 5001
@@ -51,8 +53,22 @@ log.info("MKA VERSION: %s" % __VERSION__)
 log.info("server : %s" % TUNNEL_SERVER)
 
 
+def get_file_content(file_path):
+    try:
+        with codecs.open(file_path, 'r', "utf-8") as f:
+            return f.read().strip()
+    except IOError:
+        return ''
+
+
+def get_kiosk_home():
+    return get_file_content("/home/mm/.kioskconfig/kiosk_home")
+
+
 def get_kiosk_id():
-    return "A010"
+    id = get_file_content(get_kiosk_home() + ".kioskconfig/kiosk_id")
+    kiosk_id = id if id else DEFAULT_ID
+    return kiosk_id
 
 
 class Cka(object):
