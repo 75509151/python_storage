@@ -1,6 +1,10 @@
 #!/usr/bin/python
+# coding: utf-8
 """ The ssh tunnel and ssh reverse tunnel.
-
+    相关命令
+    ssh-keygen
+    ssh-copy-id 可以直接将本地的公钥拷贝到服务器
+    ssh 反向连接 不稳定，所有才有了这个脚本，实际上可以使用autossh代替此脚本
 
 """
 
@@ -16,8 +20,8 @@ except:
 import os
 import time
 import pexpect
+import logging
 
-from cutils.c_log import init_log
 
 # Config for cka.
 MAX_DUP = 120
@@ -35,7 +39,14 @@ PEM_FILE_PATH = os.path.join("/home/mm", "var", "config", "parking_key")
 
 
 # init log
-log = init_log("cka")
+log = logging.getLogger(__name__)
+
+# 再创建一个handler，用于输出到控制台
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+log.addHandler(ch)
+log.setLevel(logging.DEBUG)
+
 log.info("MKA VERSION: %s" % __VERSION__)
 log.info("server : %s" % TUNNEL_SERVER)
 
@@ -57,7 +68,7 @@ class Cka(object):
         self.current_dup = 0
         # get the ssh tunnel command
         self.cmd = self.get_cmd()
-        # log.info("cmd : %s " % self.cmd)
+        log.info("cmd : %s " % self.cmd)
         self.tunnel = None
         self.reset_file = ""
         self.alive_file = ""
@@ -146,7 +157,7 @@ class Cka(object):
 
             try:
                 result = self.tunnel.read_nonblocking(8192, 10)
-
+                print result
                 if result.find('No such file or directory') != -1:
                     #log.info('tunnel checking ok, sleeping\n', INFO)
                     pass
@@ -217,16 +228,17 @@ class Cka1(Cka):
 
     def get_cmd(self):
         """ Get linux command. """
-        return "ssh -i %s -R %s:localhost:22 " \
-               "-R %s:localhost:%s %s@%s" % (PEM_FILE_PATH,
-                                             self.hostname2port(2),
-                                             self.hostname2port(1),
-                                             LOCAL_PORT,
-                                             TUNNEL_USER,
-                                             TUNNEL_SERVER)
+        return "ssh  -R %s:localhost:22 " \
+               "-R %s:localhost:%s %s@%s" % (
+                   self.hostname2port(2),
+                   self.hostname2port(1),
+                   LOCAL_PORT,
+                   TUNNEL_USER,
+                   TUNNEL_SERVER)
 
     def kill_tunnel(self):
         """ Kill the tunnel. """
+        log.debug("kill tunnel")
         try:
             os.system('pkill -9 -f "ssh -i %s -R"' % PEM_FILE_PATH)
             self.close_tunnel()
