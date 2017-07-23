@@ -26,3 +26,5 @@ if everybody_group:
     for menber in everybody_group:
         print menber
     print "group", everybody_group
+
+embed()
