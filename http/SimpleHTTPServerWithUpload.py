@@ -278,7 +278,7 @@ if __name__ == '__main__':
         port = int(sys.argv[1])
     else:
         port = 8000
-    server_address = ('127.0.0.1', port)
+    server_address = ('0.0.0.0', port)
 
     httpd = BaseHTTPServer.HTTPServer(server_address, SimpleHTTPRequestHandler)
 
