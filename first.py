@@ -1,10 +1,19 @@
-import code
+import sys
+import BaseHTTPServer
+from SimpleHTTPServer import SimpleHTTPRequestHandler
+HandlerClass = SimpleHTTPRequestHandler
+ServerClass = BaseHTTPServer.HTTPServer
+Protocol = "HTTP/1.0"
 
-a = 1
-b = "hello"
+if sys.argv[1:]:
+    port = int(sys.argv[1])
+else:
+    port = 8000
+server_address = ('127.0.0.1', port)
 
-print a, b
+HandlerClass.protocol_version = Protocol
+httpd = ServerClass(server_address, HandlerClass)
 
-banner = "test"
-
-code.interact(banner=banner, local=locals())
+sa = httpd.socket.getsockname()
+print "Serving HTTP on", sa[0], "port", sa[1], "..."
+httpd.serve_forever()
