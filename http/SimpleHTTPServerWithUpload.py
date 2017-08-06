@@ -272,9 +272,16 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     })
 
 
-def test(HandlerClass=SimpleHTTPRequestHandler,
-         ServerClass=BaseHTTPServer.HTTPServer):
-    BaseHTTPServer.test(HandlerClass, ServerClass)
-
 if __name__ == '__main__':
-    test()
+    import sys
+    if sys.argv[1:]:
+        port = int(sys.argv[1])
+    else:
+        port = 8000
+    server_address = ('127.0.0.1', port)
+
+    httpd = BaseHTTPServer.HTTPServer(server_address, SimpleHTTPRequestHandler)
+
+    sa = httpd.socket.getsockname()
+    print "Serving HTTP on", sa[0], "port", sa[1], "..."
+    httpd.serve_forever()
