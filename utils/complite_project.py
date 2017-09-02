@@ -42,22 +42,38 @@ project_name = os.path.basename(project_path)
 output_dir = os.path.join(project_path, "complite_dir")
 
 if os.path.exists(output_dir):
-    os.rmdir(output_dir)
+    shutil.rmtree(output_dir)
 
 
-all_py = []
+all_file = []
 for (dirpath, dirnames, filenames) in os.walk(project_path):
     # print dirpath, dirnames, filenames
-    py_files = [os.path.join(dirpath, file) for file in filenames if file.endswith(".py")]
-    # print py_files
-    all_py += py_files
+    all_file += [os.path.join(dirpath, file) for file in filenames]
 
-for py_file in all_py:
-    relative_file = get_relative_file_in_project(project_path, py_file)
-    pyc_file = os.path.join(output_dir, relative_file + "c")
-    pyc_path = os.path.dirname(pyc_file)
-    if not os.path.exists(pyc_path):
-        os.makedirs(pyc_path)
-    # print pyc_file, relative_file
-    # break
-    py_compile.compile(py_file, pyc_file)
+for file in all_file:
+
+    def deal_py(py_file):
+
+        relative_file = get_relative_file_in_project(project_path, py_file)
+        pyc_file = os.path.join(output_dir, relative_file + "c")
+        pyc_path = os.path.dirname(pyc_file)
+        if not os.path.exists(pyc_path):
+            os.makedirs(pyc_path)
+        # print pyc_file, relative_file
+        # break
+        py_compile.compile(py_file, pyc_file)
+
+    def deal_other(other_file):
+        relative_file = get_relative_file_in_project(project_path, other_file)
+        other_path_file = os.path.join(output_dir, relative_file)
+        output_path = os.path.dirname(other_path_file)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        shutil.copyfile(other_file, other_path_file)
+
+    if file.endswith(".py"):
+        deal_py(file)
+    else:
+        deal_other(file)
+
+print "end"
