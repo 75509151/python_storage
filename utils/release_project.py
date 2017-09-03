@@ -1,7 +1,22 @@
+# coding: utf-8
 import compileall
 import os
 import shutil
 import subprocess
+import sys
+
+
+def get_bool_input():
+    yes = set(['yes', 'y', 'y'])
+    no = set(['no', 'n'])
+
+    choice = raw_input().lower()
+    if choice in yes:
+        return True
+    elif choice in no:
+        return False
+    else:
+        print "Please respond with 'yes' or 'no'"
 
 
 def do_cmd(cmd):
@@ -68,13 +83,28 @@ def _pack_project(project_path, pack_name):
 
 
 def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=3):
+    if os.path.exists(todir):
+        print "输出路径的文件夹存在，需要删除文件夹吗？[y/n]"
+        if get_bool_input():
+            shutil.rmtree(todir)
+            os.makedirs(todir)
+        else:
+            sys.exit(0)
+    else:
+        os.makedirs(todir)
     os.chdir(todir)
     return_code, out, err = do_cmd("split -b {block_size} {file} -d -a {suffix_length} {prefix}".format(
         block_size=block_size,
         file=file,
         suffix_length=suffix_length,
         prefix=prefix))
-    print return_code, out, err
+    if return_code or err:
+        raise Exception(err)
+    return True
+
+
+def _gen_download_info():
+    pass
 
 
 if __name__ == '__main__':
@@ -82,5 +112,5 @@ if __name__ == '__main__':
     # release_project("/home/mm/code/kiosk", "/home/mm/code/kiosk_release")
     # _pack_project("/home/mm/code/kiosk", "/home/mm/code/test/kiosk_121.tgz")
     # creat_version("/home/mm/code/kiosk", "/home/mm/code/test", version="1.2.1")
-    _split_file("/home/mm/code/test/kiosk_121.tgz", "/home/mm/code/test/", prefix="kiosk")
+    _split_file("/home/mm/code/test/kiosk_121.tgz", "/home/mm/code/test/version121/", prefix="kiosk")
     print "end"
