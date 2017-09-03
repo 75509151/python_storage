@@ -21,6 +21,8 @@ def _check_project(project_path):
     return_code, out, err = do_cmd("svn status")
     if return_code != 0 or err:
         raise Exception(err)
+    if out:
+        raise Exception("project not clean: %s" % out)
     return True
 
 
@@ -52,5 +54,33 @@ def release_project(project_path, output_path, svn_check=True):
     _clean_project(output_path)
 
 
+def creat_version(project_path, output_path, version, prefix="kiosk"):
+    version = version.replace(".", "")
+    pack_name = os.path.join(output_path, prefix + "_" + version + ".tgz")
+    print pack_name
+    _pack_project(project_path, pack_name)
+    project_tgz = pack_name
+    _split_file(project_tgz)
+
+
+def _pack_project(project_path, pack_name):
+    os.system("tar -cvzf {pack_name} {project_path}".format(pack_name=pack_name, project_path=project_path))
+
+
+def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=3):
+    os.chdir(todir)
+    return_code, out, err = do_cmd("split -b {block_size} {file} -d -a {suffix_length} {prefix}".format(
+        block_size=block_size,
+        file=file,
+        suffix_length=suffix_length,
+        prefix=prefix))
+    print return_code, out, err
+
+
 if __name__ == '__main__':
-    release_project("/home/mm/code/kiosk", "/home/mm/code/kiosk_release")
+    # _check_project("/home/mm/code/kiosk")
+    # release_project("/home/mm/code/kiosk", "/home/mm/code/kiosk_release")
+    # _pack_project("/home/mm/code/kiosk", "/home/mm/code/test/kiosk_121.tgz")
+    # creat_version("/home/mm/code/kiosk", "/home/mm/code/test", version="1.2.1")
+    _split_file("/home/mm/code/test/kiosk_121.tgz", "/home/mm/code/test/", prefix="kiosk")
+    print "end"
