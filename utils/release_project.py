@@ -120,7 +120,7 @@ def creat_version(release_path, output_path, version, prefix="kiosk"):
 
 def _pack_project(release_path, pack_name):
     print "pack release path"
-    do_cmd("tar -cpzf {pack_name} {release_path}".format(pack_name=pack_name, release_path=release_path))
+    do_cmd("gzip --rsyncable {pack_name} {release_path}".format(pack_name=pack_name, release_path=release_path))
     print "pack end: to %s" % pack_name
 
 
