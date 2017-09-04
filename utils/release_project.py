@@ -61,7 +61,7 @@ def _complite_project(project_path):
 def _clean_project(project_path):
 
     def clean_py():
-        print "clean py beging"
+        print "clean py begin"
         all_py = []
         for (dirpath, dirnames, filenames) in os.walk(project_path):
             # print dirpath, dirnames, filenames
@@ -71,6 +71,15 @@ def _clean_project(project_path):
             os.remove(py_file)
         print "clean py end"
     clean_py()
+
+    def clean_svn():
+        print "clean .svn begin"
+        svn_info_path = os.path.join(project_path, ".svn")
+        if os.path.exists(svn_info_path):
+            shutil.rmtree(svn_info_path)
+        print "clean .svn end"
+
+    clean_svn()
 
 
 def _cp_project(project_path, todir):
