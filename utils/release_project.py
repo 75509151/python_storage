@@ -4,19 +4,29 @@ import os
 import shutil
 import subprocess
 import sys
+import glob
+import hashlib
 
 
 def get_bool_input():
     yes = set(['yes', 'y', 'y'])
     no = set(['no', 'n'])
+    while True:
+        choice = raw_input().lower()
+        if choice in yes:
+            return True
+        elif choice in no:
+            return False
+        else:
+            print "Please respond with 'yes' or 'no'"
 
-    choice = raw_input().lower()
-    if choice in yes:
-        return True
-    elif choice in no:
-        return False
-    else:
-        print "Please respond with 'yes' or 'no'"
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 def do_cmd(cmd):
@@ -82,7 +92,7 @@ def _pack_project(project_path, pack_name):
     os.system("tar -cvzf {pack_name} {project_path}".format(pack_name=pack_name, project_path=project_path))
 
 
-def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=3):
+def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=4):
     if os.path.exists(todir):
         print "输出路径的文件夹存在，需要删除文件夹吗？[y/n]"
         if get_bool_input():
@@ -103,8 +113,20 @@ def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=3):
     return True
 
 
-def _gen_download_info():
-    pass
+def _generate_download_info(splited_files_path, files_prefix="kiosk", version=""):
+    files = glob.glob(os.path.join(splited_files_path, files_prefix + "*"))
+    info_dict = {}
+    info_dict = {"files_count": len(files)}
+    for file in files:
+        file_md5 = md5(file)
+        _, file_name = os.path.split(file)
+        info_dict[file_name] = file_md5
+
+    info_file = os.path.join(splited_files_path, "version_info.json")
+    print info_dict
+    import json
+    with open(info_file, "w") as f:
+        json.dump(info_dict, f)
 
 
 if __name__ == '__main__':
@@ -112,5 +134,6 @@ if __name__ == '__main__':
     # release_project("/home/mm/code/kiosk", "/home/mm/code/kiosk_release")
     # _pack_project("/home/mm/code/kiosk", "/home/mm/code/test/kiosk_121.tgz")
     # creat_version("/home/mm/code/kiosk", "/home/mm/code/test", version="1.2.1")
-    _split_file("/home/mm/code/test/kiosk_121.tgz", "/home/mm/code/test/version121/", prefix="kiosk")
+    # _split_file("/home/mm/code/test/kiosk_121.tgz", "/home/mm/code/test/version121/", prefix="kiosk")
+    _generate_download_info("/home/mm/code/test/version121/", files_prefix="kiosk")
     print "end"
