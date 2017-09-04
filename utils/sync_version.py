@@ -57,14 +57,14 @@ def _check_md5(local_path, prefix="kiosk"):
     with open(download_info_filename, "r") as f:
         download_info = json.load(f)
     need_check_files = glob.glob(os.path.join(local_path, "kiosk*"))
-    print need_check_files
+    # print need_check_files
     if len(need_check_files) != download_info["files_count"]:
         print "miss some files"
         return False
     for file in need_check_files:
         _, file_name = os.path.split(file)
         try:
-            if md5(file) == download_info[file_name]:
+            if download_info[file_name] == md5(file):
                 continue
             else:
                 return False
@@ -93,6 +93,10 @@ def sync_version(remote_path, local_path, version=""):
         print "sync_version ok"
     else:
         print "sync_version failed"
+
+
+def cat_split_files_to_file(prefix="kiosk", name="kiosk"):
+    pass
 
 
 def sync_version_retry():
