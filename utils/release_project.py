@@ -30,6 +30,7 @@ def md5(fname):
 
 
 def do_cmd(cmd):
+    print "do cmd: %s" % cmd
     child = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     child.wait()
     out = child.stdout.read()
@@ -114,7 +115,7 @@ def creat_version(release_path, output_path, version, prefix="kiosk"):
     project_tgz = pack_name
     info_path = os.path.join(output_path, "version" + version)
     _split_file(project_tgz, info_path, prefix=prefix)
-    _generate_download_info(info_path, files_prefix=prefix, version=version)
+    _generate_download_info(project_tgz, info_path, files_prefix=prefix, version=version)
 
 
 def _pack_project(release_path, pack_name):
@@ -146,11 +147,12 @@ def _split_file(file, todir, prefix="x", block_size="1m", suffix_length=4):
     return True
 
 
-def _generate_download_info(splited_files_path, files_prefix="kiosk", version=""):
+def _generate_download_info(raw_file, splited_files_path, files_prefix="kiosk", version=""):
     print "generate_download_info begin: %s" % splited_files_path
     files = glob.glob(os.path.join(splited_files_path, files_prefix + "*"))
     info_dict = {}
     info_dict = {"files_count": len(files)}
+    info_dict["raw_md5"] = md5(raw_file)
     for file in files:
         file_md5 = md5(file)
         _, file_name = os.path.split(file)

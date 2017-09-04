@@ -18,6 +18,7 @@ def md5(fname):
 
 
 def do_cmd(cmd):
+    print "do cmd: %s" % cmd
     child = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     child.wait()
     out = child.stdout.read()
@@ -91,19 +92,36 @@ def sync_version(remote_path, local_path, version=""):
     _sync_version_all(remote_version_path, local_path)
     if _check_md5(local_path):
         print "sync_version ok"
+        return True
     else:
         print "sync_version failed"
+        return False
 
 
-def cat_split_files_to_file(prefix="kiosk", name="kiosk"):
-    pass
+def cat_split_files_to_file(local_path, file_name="kiosk.tgz", prefix="kiosk"):
+    print "cat files begin"
+    splited_files = os.path.join(local_path, prefix + "*")
+    file = os.path.join(local_path, file_name)
+    # returncode, out, err = do_cmd("cat {splited_files} > {file}".format(
+    #     splited_files=splited_files, file=file))
+    # if returncode or err:
+    #     print "returncode: %s, err: %s" % (returncode, err)
+    os.system("cat {splited_files} > {file}".format(splited_files=splited_files, file=file))
+    print "cat files end. to: %s" % file
+    return file
 
 
 def sync_version_retry():
     pass
 
 
+def package_download(remote_path, local_path, version):
+    sync_version(remote_path, local_path, version=version)
+    package = cat_split_files_to_file(local_path)
+    print md5(package)
+
+
 if __name__ == '__main__':
     remote_path = "/home/mm/code/test/"
     local_path = "/home/mm/code/test/local/"
-    sync_version(remote_path, local_path, version="1.2.1")
+    package_download(remote_path, local_path, version="1.2.1")
