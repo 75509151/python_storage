@@ -9,6 +9,7 @@ from wx.lib.pubsub import Publisher as pub
 
 
 class Model:
+
     def __init__(self):
         self.myMoney = 0
 
@@ -24,6 +25,7 @@ class Model:
 
 
 class View(wx.Frame):
+
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, title="Main View")
 
@@ -42,6 +44,7 @@ class View(wx.Frame):
 
 
 class ChangerWidget(wx.Frame):
+
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, title="Main View")
 
@@ -54,6 +57,7 @@ class ChangerWidget(wx.Frame):
 
 
 class Controller:
+
     def __init__(self, app):
         self.model = Model()
 

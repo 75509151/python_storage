@@ -1,15 +1,13 @@
-# coding:utf-8
-import copy
+import code
 
-from collections import Counter
+a = 1
+b = "hello"
 
-name = ["pid", "quantity", "status"]
+print a, b
 
-# for k, v in data.items():
-#     for slot in v:
-#         slot_info = dict(zip(name, slot))
-#         print slot_info
+banner = "test"
 
+<<<<<<< HEAD
 
 def change_mode(t):
     return dict(zip(name, t))
@@ -190,3 +188,6 @@ class TestOrder(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+=======
+code.interact(banner=banner, local=locals())
+>>>>>>> 7a6595cd79e325e333993ecbd662c5fc7b002a47
