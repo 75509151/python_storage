@@ -2,6 +2,11 @@ import asyncore
 import socket
 import traceback
 import sys
+from errno import EALREADY, EINPROGRESS, EWOULDBLOCK, ECONNRESET, EINVAL, \
+        ENOTCONN, ESHUTDOWN, EINTR, EISCONN, EBADF, ECONNABORTED, EPIPE, EAGAIN, \
+        errorcode
+SCONNECTED = frozenset((ECONNRESET, ENOTCONN, ESHUTDOWN, ECONNABORTED, EPIPE,
+                                                   EBADF))
 
 
 LEN = 500000
@@ -23,10 +28,10 @@ class FixDispather(asyncore.dispatcher):
                 return data
         except socket.error, why:
             # winsock sometimes throws ENOTCONN
-            if why.args[0] in asyncore._DISCONNECTED:
+            if why.args[0] in _DISCONNECTED:
                 self.handle_close()
                 return ''
-            elif why.args[0] in (asyncore.EAGAIN, asyncore.EWOULDBLOCK):
+            elif why.args[0] in (EAGAIN, EWOULDBLOCK):
                 return ''
             else:
                 raise
